@@ -83,17 +83,17 @@ namespace Tanks
         }
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            var localTank = GetComponent<PhotonView>();
             if (!PhotonNetwork.InRoom)
             {
-                Debug.Log($"Scene Loaded: Failed, {scene.name}");
                 return;
             }
-            localPlayer = PhotonNetwork.Instantiate("TankPlayer", new Vector3(0, 0, 0), Quaternion.identity, 0);
-            Debug.Log($"Scene Loaded: Sussecc, {scene.name}");
+            var spawnPoint = GetRandomSpawnPoint();
+            localPlayer = PhotonNetwork.Instantiate(
+            "TankPlayer",
+            spawnPoint.position,
+            spawnPoint.rotation,
+            0);
             Debug.Log("Player Instance ID: " + localPlayer.GetInstanceID());
-            //PhotonNetwork.NickName = "Karl";
-            //Debug.Log($"{localTank.ViewID}");
         }
 
         public static List<GameObject> GetAllObjectsOfTypeInScene<T>()

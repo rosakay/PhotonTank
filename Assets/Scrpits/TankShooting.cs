@@ -87,19 +87,19 @@ namespace Complete
         {
             m_Fired = true;
             Rigidbody shellInstance = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-            photonView.RPC("FireOther", RpcTarget.Others, m_FireTransform.position);
+            photonView.RPC("FireOther", RpcTarget.Others, m_FireTransform.position, m_CurrentLaunchForce);
             shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
             m_ShootingAudio.clip = m_FireClip;
             m_ShootingAudio.Play();
             m_CurrentLaunchForce = m_MinLaunchForce;
         }
         [PunRPC]
-        private void FireOther(Vector3 pos)
+        private void FireOther(Vector3 pos, float cf)
         {
             m_Fired = true;
             Rigidbody shellInstance = Instantiate(m_Shell, pos, m_FireTransform.rotation) as Rigidbody;
-            shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
-            m_CurrentLaunchForce = m_MinLaunchForce;
+            shellInstance.velocity = cf * m_FireTransform.forward;
+            cf = m_MinLaunchForce;
         }
     }
 }
