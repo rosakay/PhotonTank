@@ -12,6 +12,8 @@ namespace Complete
         public AudioClip m_EngineDriving;           // Audio to play when the tank is moving.
 		public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
 
+        public GameObject m_turret;
+
         private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
         private string m_TurnAxisName;              // The name of the input axis for turning.
         private Rigidbody m_Rigidbody;              // Reference used to move the tank.
@@ -72,11 +74,26 @@ namespace Complete
 
         private void Update ()
         {
+            if (Input.GetKey(KeyCode.Q))
+            {
+                m_turret.transform.Rotate(Vector3.down * Time.deltaTime * 300.0f);
+            }
+            else if (Input.GetKey(KeyCode.E))
+            {
+                m_turret.transform.Rotate(Vector3.up * Time.deltaTime * 300.0f);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                Debug.Log(m_turret.transform.eulerAngles.y);
+            }
+
             // Store the value of both input axes.
             m_MovementInputValue = Input.GetAxis (m_MovementAxisName);
             m_TurnInputValue = Input.GetAxis (m_TurnAxisName);
 
             EngineAudio ();
+
         }
 
 
@@ -137,5 +154,6 @@ namespace Complete
             // Apply this rotation to the rigidbody's rotation.
             m_Rigidbody.MoveRotation (m_Rigidbody.rotation * turnRotation);
         }
+
     }
 }
