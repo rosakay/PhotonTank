@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 
 namespace Complete
 {
-    public class TankMovement : MonoBehaviour
+    public class TankMovement : MonoBehaviourPunCallbacks
     {
         public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
         public float m_Speed = 12f;                 // How fast the tank moves forward and back.
@@ -12,8 +13,6 @@ namespace Complete
         public AudioClip m_EngineDriving;           // Audio to play when the tank is moving.
 		public float m_PitchRange = 0.2f;           // The amount by which the pitch of the engine noises can vary.
 
-        public GameObject m_turret;
-
         private string m_MovementAxisName;          // The name of the input axis for moving forward and back.
         private string m_TurnAxisName;              // The name of the input axis for turning.
         private Rigidbody m_Rigidbody;              // Reference used to move the tank.
@@ -22,9 +21,15 @@ namespace Complete
         private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
         private ParticleSystem[] m_particleSystems; // References to all the particles systems used by the Tanks
 
+        public GameObject m_turret;
+        public Transform m_turretTranform;
+        public float m_turretTurnSpeed = 180f;
+        float turretAngle;
+
         private void Awake ()
         {
             m_Rigidbody = GetComponent<Rigidbody> ();
+            //turnAngle = m_turret.transform.rotation();
         }
 
 
@@ -76,16 +81,11 @@ namespace Complete
         {
             if (Input.GetKey(KeyCode.Q))
             {
-                m_turret.transform.Rotate(Vector3.down * Time.deltaTime * 300.0f);
+                turretAngle -= 1.0f;
             }
             else if (Input.GetKey(KeyCode.E))
             {
-                m_turret.transform.Rotate(Vector3.up * Time.deltaTime * 300.0f);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                Debug.Log(m_turret.transform.eulerAngles.y);
+                turretAngle += 1.0f;
             }
 
             // Store the value of both input axes.
@@ -130,6 +130,7 @@ namespace Complete
             // Adjust the rigidbodies position and orientation in FixedUpdate.
             Move ();
             Turn ();
+            turretTurn();
         }
 
 
@@ -153,6 +154,18 @@ namespace Complete
 
             // Apply this rotation to the rigidbody's rotation.
             m_Rigidbody.MoveRotation (m_Rigidbody.rotation * turnRotation);
+        }
+
+        private void turretTurn()
+        {
+            Quaternion turretTurnRotation = Quaternion.Euler(0f, turretAngle, 0f);
+            m_turretTranform.rotation = turretTurnRotation;
+            photonView.RPC("turretOther", RpcTarget.Others, m_turretTranform.rotation);
+        }
+        [PunRPC]
+        private void turretOther(Quaternion ta)
+        {
+            m_turretTranform.rotation = ta;
         }
 
     }

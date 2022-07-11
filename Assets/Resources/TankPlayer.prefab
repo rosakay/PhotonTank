@@ -372,8 +372,9 @@ MonoBehaviour:
   m_EngineIdling: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
   m_EngineDriving: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
   m_PitchRange: 0.1
-  m_turretTurnSpeed: 10
   m_turret: {fileID: 3042184988975290533}
+  m_turretTranform: {fileID: 3042184988974921899}
+  m_turretTurnSpeed: 10
 --- !u!114 &3042184988965053433
 MonoBehaviour:
   m_ObjectHideFlags: 0
